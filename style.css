@@ -1,0 +1,453 @@
+/* =========================
+   0) RESET (avoid old rules)
+   ========================= */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; }
+
+/* 关键：防止任何旧规则把 img 拉到 100% */
+img { max-width: none; width: auto; height: auto; display: block; }
+
+/* =========================
+   1) LOAD FONT: Charleston
+   你已有字体对了，保持同路径
+   ========================= */
+@font-face{
+  font-family: "Charleston";
+  src: url("fonts/Charleston.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face{
+  font-family: "ABCROM";
+  src: url("fonts/ABCROMExtended-Bold-Trial.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face{
+  font-family: "ABCROM";
+  src: url("fonts/ABCROMExtended-BoldItalic-Trial.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+
+
+/* =========================
+   2) COVER PAGE ONLY
+   ========================= */
+body.cover{
+  background: #000;
+  overflow: hidden;   /* 永远不出现滚动条 */
+  display: grid;
+  place-items: center;
+}
+
+/* clickable wrapper */
+body.cover .doorLink{
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* ===== door image sizing (THIS is the only knob you adjust) =====
+   目标：门占屏幕高度约 60% 左右，且不爆
+*/
+body.cover .doorImg{
+  height: min(68vh, 720px);  /* 先给你一个很像参考图的比例 */
+  width: auto;
+
+  opacity: 1;
+  transition: opacity .35s ease;
+}
+
+body.cover .doorText{
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Charleston", serif;
+  font-size: 28px;
+  letter-spacing: .18em;
+  color: #e10600;
+
+  opacity: 0;
+  transition: opacity .35s ease;
+
+  /* ✅ 关键：不允许换行 */
+  white-space: nowrap;
+
+  /* ✅ 关键：旋转以中心为轴 */
+  transform-origin: center;
+  transform: rotate(90deg);
+
+  pointer-events: none;
+}
+
+
+/* hover interaction */
+body.cover .doorLink:hover .doorImg{
+  opacity: 0;
+}
+body.cover .doorLink:hover .doorText{
+  opacity: 1;
+}
+
+/* optional: keyboard focus */
+body.cover .doorLink:focus-visible{
+  outline: 1px solid rgba(255,255,255,.4);
+  outline-offset: 12px;
+  border-radius: 10px;
+}
+/* =========================
+   INSIDE PAGE (webzine)
+   ========================= */
+
+body.inside{
+  background: #000;
+  color: #fff;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* top tags row */
+.tags{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 18px 26px 16px;
+  background: #000;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  border-bottom: 2px dotted rgba(255,255,255,.35);
+}
+
+.tag{
+  color: #fff;
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: .02em;
+
+  border: 2px dotted rgba(255,255,255,.5);
+  border-radius: 999px;
+  padding: 6px 10px;
+  line-height: 1;
+  opacity: .95;
+}
+
+.tag:hover{
+  color: #e10600;
+  border-color: #e10600;
+}
+
+.tag.is-active{
+  border-color: rgba(255,255,255,.9);
+  opacity: 1;
+}
+
+/* sticky quote block */
+.quote{
+  position: sticky;
+  top: 78px; /* tags 的高度下面 */
+  z-index: 10;
+  background: #000;
+  border-bottom: 2px dotted rgba(255,255,255,.25);
+}
+
+.quoteInner{
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+  padding: 56px 0 40px;
+  position: relative;
+}
+
+.quoteText{
+  font-family: "Charleston", serif;
+  font-size: clamp(44px, 6vw, 92px);
+  line-height: 1.05;
+  letter-spacing: .02em;
+  margin: 0;
+}
+
+.quoteCaption{
+  margin: 18px 0 0;
+  text-align: right;
+  font-style: italic;
+  font-size: 16px;
+}
+
+.captionAccent{
+  color: #e7e000; /* 你图里黄色 */
+}
+
+/* right icon (pure CSS simple sigil) */
+.sigil{
+  position: absolute;
+  right: 0;
+  top: 26px;
+  width: 58px;
+  height: 58px;
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,.55);
+  box-shadow: 0 0 0 6px rgba(126,48,200,.15) inset;
+}
+.sigil::before{
+  content:"";
+  position:absolute;
+  inset: 14px;
+  border-radius: 999px;
+  border: 3px solid rgba(126,48,200,.75);
+}
+
+/* big image area (this will push over the sticky quote visually) */
+.stage{
+  position: relative;
+  z-index: 20; /* 比 quote 高，让图“顶上去” */
+  padding: 42px 0 72px;
+  background: #000;
+}
+
+.bigLink{
+  display: block;
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+
+  position: relative;
+  border: 2px solid #e10600;        /* 红外框 */
+  padding: 10px;                     /* 框与图的距离 */
+  text-decoration: none;
+  color: #fff;
+}
+
+/* dotted inner border */
+.bigLink::before{
+  content:"";
+  position:absolute;
+  inset: 10px;
+  border: 2px dotted rgba(255,255,255,.55);
+  pointer-events: none;
+}
+
+.bigImg{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* small “可点” hint on image */
+.bigHint{
+  position: absolute;
+  left: 22px;
+  top: 22px;
+  font-size: 14px;
+  opacity: .85;
+  text-shadow: 0 1px 2px rgba(0,0,0,.6);
+}
+
+/* subtle hover feedback on the big image */
+.bigLink:hover{
+  border-color: #ff2a2a;
+}
+.bigLink:hover::before{
+  border-color: rgba(255,42,42,.9);
+}
+
+/* bottom dotted divider like your mock */
+.divider{
+  border-top: 2px dotted rgba(255,255,255,.35);
+  margin: 0;
+}
+
+/* =========================
+   INSIDE PAGE (webzine)
+   ========================= */
+
+body.inside{
+  background: #000;
+  color: #fff;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* top tags row */
+.tags{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 18px 26px 16px;
+  background: #000;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  border-bottom: 3px dotted rgba(255,255,255,.35);
+}
+
+.tag{
+  font-family: "ABCROM", system-ui, sans-serif;
+
+  font-size: 14px;          /* ⬅️ 原来多半是 12px，直接放大 */
+  padding: 8px 14px;        /* ⬅️ 让按钮“站得住” */
+  letter-spacing: .04em;    /* ⬅️ 稍微收一点，不再显小 */
+
+  color: #fff;
+  text-decoration: none;
+ border: 3px dotted rgba(255,255,255,.6);  /* ⬅️ 点立刻变大、变稳 */
+
+
+  border-radius: 999px;
+  line-height: 1;
+}
+
+
+.tag:hover{
+  color: #e10600;
+  border-color: #e10600;
+}
+
+.tag.is-active{
+  border-color: rgba(255,255,255,.9);
+  opacity: 1;
+}
+
+/* sticky quote block */
+.quote{
+  position: sticky;
+  top: 78px; /* tags 的高度下面 */
+  z-index: 10;
+  background: #000;
+
+}
+
+.quoteInner{
+  width: min(1400px, 96vw);   /* ✅ 原来 1200 太窄，会导致断行 */
+  margin: 0 auto;
+  padding: 56px 0 40px;
+  position: relative;
+}
+
+
+.quoteText{
+  font-family: "Charleston", serif;
+  font-size: clamp(52px, 6.2vw, 90px);  /* ✅ 稍微比你现在小一点点 */
+  letter-spacing: .03em;
+  margin: 0;
+}
+
+
+/* 每一行都当作独立排版对象 */
+.quoteText .line{
+  display: block;
+  line-height: 1.05;
+}
+
+.quoteText .line-1{
+  margin-bottom: 44px;        /* ✅ 两行之间的“海报间距” */
+}
+
+.quoteText .line-2{
+  margin-left: 70px;          /* ✅ 第二行整体右移 */
+  white-space: nowrap;        /* ✅ 核心：禁止断行，否则永远不对 */
+}
+
+
+
+.quoteCaption{
+  margin: 18px 0 0;
+  text-align: right;
+  font-style: italic;
+  font-size: 16px;
+}
+
+.captionAccent{
+  color: #e7e000; /* 你图里黄色 */
+}
+
+/* right icon (pure CSS simple sigil) */
+.sigil{
+  position: absolute;
+  right: 0;
+  top: 26px;
+  width: 58px;
+  height: 58px;
+  border-radius: 999px;
+  border: 3px solid rgba(255,255,255,.55);
+  box-shadow: 0 0 0 6px rgba(126,48,200,.15) inset;
+}
+.sigil::before{
+  content:"";
+  position:absolute;
+  inset: 14px;
+  border-radius: 999px;
+  border: 3px solid rgba(126,48,200,.75);
+}
+
+/* big image area (this will push over the sticky quote visually) */
+.stage{
+  position: relative;
+  z-index: 20; /* 比 quote 高，让图“顶上去” */
+  padding: 18px 0 72px;
+  background: #000;
+}
+
+.bigLink{
+  display: block;
+  width: min(1600px, 98vw);
+  margin: 0 auto;
+
+  position: relative;
+  border: 2px solid #e10600;        /* 红外框 */
+  padding: 10px;                     /* 框与图的距离 */
+  text-decoration: none;
+  color: #fff;
+}
+
+/* dotted inner border */
+.bigLink::before{
+  content:"";
+  position:absolute;
+  inset: 12px;
+  border: 3px dotted rgba(255,255,255,.6); /* ⬅️ 点变大 */
+  pointer-events: none;
+}
+
+
+.bigImg{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* small “可点” hint on image */
+.bigHint{
+  position: absolute;
+  left: 22px;
+  top: 22px;
+  font-size: 14px;
+  opacity: .85;
+  text-shadow: 0 1px 2px rgba(0,0,0,.6);
+}
+
+/* subtle hover feedback on the big image */
+.bigLink:hover{
+  border-color: #ff2a2a;
+}
+.bigLink:hover::before{
+  border-color: rgba(255,42,42,.9);
+}
+
+/* bottom dotted divider like your mock */
+.divider{
+  display: none;
+}
+
+
+
